@@ -1,9 +1,10 @@
-public class BinaryTreeArray12 {
+class BinaryTreeArray12 {
     int[] data;
     int idxLast;
 
     public BinaryTreeArray12() {
         data = new int[10];
+        idxLast = -1;
     }
 
     void populateData(int data[], int idxLast) {
@@ -11,11 +12,33 @@ public class BinaryTreeArray12 {
         this.idxLast = idxLast;
     }
 
+    void add(int value) {
+        if (idxLast < data.length - 1) {
+            data[++idxLast] = value;
+        }
+    }
+
     void traversalInOrder(int idxStart) {
         if (idxStart <= idxLast && data[idxStart] != 0) {
             traversalInOrder(2 * idxStart + 1);
             System.out.print(data[idxStart] + " ");
             traversalInOrder(2 * idxStart + 2);
+        }
+    }
+
+    void traversePreOrder(int idxStart) {
+        if (idxStart <= idxLast && data[idxStart] != 0) {
+            System.out.print(data[idxStart] + " ");
+            traversePreOrder(2 * idxStart + 1);
+            traversePreOrder(2 * idxStart + 2);
+        }
+    }
+
+    void traversePostOrder(int idxStart) {
+        if (idxStart <= idxLast && data[idxStart] != 0) {
+            traversePostOrder(2 * idxStart + 1);
+            traversePostOrder(2 * idxStart + 2);
+            System.out.print(data[idxStart] + " ");
         }
     }
 }

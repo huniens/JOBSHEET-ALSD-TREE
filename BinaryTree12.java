@@ -1,171 +1,92 @@
-public class BinaryTree12 {
+class BinaryTree12 {
     Node12 root;
 
-    public BinaryTree12() {
+    static class Node12 {
+        int value;
+        Node12 left, right;
+
+        Node12(int item) {
+            value = item;
+            left = right = null;
+        }
+    }
+
+    // Constructor
+    BinaryTree12() {
         root = null;
     }
 
-    boolean isEmpty() {
-        return root == null;
+    // Method to add a node recursively
+    void add(int value) {
+        root = addRecursive(root, value);
     }
 
-    void add(int data) {
-        if (isEmpty()) {
-            root = new Node12(data);
-        } else {
-            Node12 current = root;
-            while (true) {
-                if (data < current.data) {
-                    if (current.left == null) {
-                        current.left = new Node12(data);
-                        break;
-                    } else {
-                        current = current.left;
-                    }
-                } else if (data > current.data) {
-                    if (current.right == null) {
-                        current.right = new Node12(data);
-                        break;
-                    } else {
-                        current = current.right;
-                    }
-                } else {
-                    break; // Data already exists in the tree, do nothing
-                }
-            }
-        }
-    }
-
-    boolean find(int data) {
-        Node12 current = root;
-        while (current != null) {
-            if (current.data == data) {
-                return true;
-            } else if (data < current.data) {
-                current = current.left;
-            } else {
-                current = current.right;
-            }
-        }
-        return false;
-    }
-
-    void traversePreOrder(Node12 node) {
-        if (node != null) {
-            System.out.print(" " + node.data);
-            traversePreOrder(node.left);
-            traversePreOrder(node.right);
-        }
-    }
-
-    void traversePostOrder(Node12 node) {
-        if (node != null) {
-            traversePostOrder(node.left);
-            traversePostOrder(node.right);
-            System.out.print(" " + node.data);
-        }
-    }
-
-    void traverseInOrder(Node12 node) {
-        if (node != null) {
-            traverseInOrder(node.left);
-            System.out.print(" " + node.data);
-            traverseInOrder(node.right);
-        }
-    }
-
-    Node12 getSuccessor(Node12 del) {
-        Node12 successor = del.right;
-        Node12 successorParent = del;
-        while (successor.left != null) {
-            successorParent = successor;
-            successor = successor.left;
-        }
-        if (successor != del.right) {
-            successorParent.left = successor.right;
-            successor.right = del.right;
-        }
-        return successor;
-    }
-
-    void delete(int data) {
-        if (isEmpty()) {
-            System.out.println("Tree is empty!");
-            return;
-        }
-        Node12 parent = root;
-        Node12 current = root;
-        boolean isLeftChild = false;
-        while (current != null) {
-            if (current.data == data) {
-                break;
-            } else if (data < current.data) {
-                parent = current;
-                current = current.left;
-                isLeftChild = true;
-            } else {
-                parent = current;
-                current = current.right;
-                isLeftChild = false;
-            }
-        }
+    Node12 addRecursive(Node12 current, int value) {
         if (current == null) {
-            System.out.println("Couldn't find data!");
-            return;
-        } else {
-            if (current.left == null && current.right == null) {
-                if (current == root) {
-                    root = null;
-                } else {
-                    if (isLeftChild) {
-                        parent.left = null;
-                    } else {
-                        parent.right = null;
-                    }
-                }
-            } else if (current.left == null) {
-                if (current == root) {
-                    root = current.right;
-                } else {
-                    if (isLeftChild) {
-                        parent.left = current.right;
-                    } else {
-                        parent.right = current.right;
-                    }
-                }
-            } else if (current.right == null) {
-                if (current == root) {
-                    root = current.left;
-                } else {
-                    if (isLeftChild) {
-                        parent.left = current.left;
-                    } else {
-                        parent.right = current.left;
-                    }
-                }
-            } else {
-                Node12 successor = getSuccessor(current);
-                if (current == root) {
-                    root = successor;
-                } else {
-                    if (isLeftChild) {
-                        parent.left = successor;
-                    } else {
-                        parent.right = successor;
-                    }
-                }
-                successor.left = current.left;
+            return new Node12(value);
+        }
+
+        if (value < current.value) {
+            current.left = addRecursive(current.left, value);
+        } else if (value > current.value) {
+            current.right = addRecursive(current.right, value);
+        }
+
+        return current;
+    }
+
+    // Method to find the minimum value in the tree
+    int findMinValue(Node12 node) {
+        if (node.left != null) {
+            return findMinValue(node.left);
+        }
+        return node.value;
+    }
+
+    // Method to find the maximum value in the tree
+    int findMaxValue(Node12 node) {
+        if (node.right != null) {
+            return findMaxValue(node.right);
+        }
+        return node.value;
+    }
+
+    // Method to print the minimum and maximum values
+    void printMinMax() {
+        System.out.println("Minimum value: " + findMinValue(root));
+        System.out.println("Maximum value: " + findMaxValue(root));
+    }
+
+    // Method to print leaf nodes
+    void printLeafNodes(Node12 node) {
+        if (node != null) {
+            if (node.left == null && node.right == null) {
+                System.out.print(node.value + " ");
             }
+            printLeafNodes(node.left);
+            printLeafNodes(node.right);
         }
     }
-}
 
-class Node12 {
-    int data;
-    Node12 left, right;
+    void printLeaves() {
+        System.out.print("Leaf nodes: ");
+        printLeafNodes(root);
+        System.out.println();
+    }
 
-    public Node12(int data) {
-        this.data = data;
-        left = right = null;
+    // Method to count the number of leaf nodes
+    int countLeaves(Node12 node) {
+        if (node == null) {
+            return 0;
+        }
+        if (node.left == null && node.right == null) {
+            return 1;
+        } else {
+            return countLeaves(node.left) + countLeaves(node.right);
+        }
+    }
+
+    int getLeafCount() {
+        return countLeaves(root);
     }
 }
